@@ -10,10 +10,10 @@ BASE_URL = "https://api.aryabhat.ai"
 LOGIN_ENDPOINT = f"{BASE_URL}/api/auth/login"
 
 VALID_USERNAME = "valid_mail@gmail.com"
-VALID_PASSWORD = "valid_password_123"
+VALID_PASSWORD = "Valid@123"
 
-DOC_USERNAME = "Doc_user"
-DOC_PASSWORD = "Doc_password_123"
+DOC_USERNAME = "DocUser"
+DOC_PASSWORD = "Valid@123"
 
 # Global storage for variable substitution
 stored_values = {}
@@ -90,27 +90,40 @@ def build_headers(header_field, tokens):
 
 def substitute_variables(data):
     """
-    Recursively replace {{TestID.key}} placeholders using stored values.
-    Handles nested dictionaries, lists, and strings.
+    Recursively replace {{TestID.key.nested.key}} placeholders using stored values.
+    Handles nested dictionaries, lists, and strings with multi-level key paths.
+    
+    Issue #4 Fix: Now supports nested keys like {{TC01.user.profile.name}}
     """
     if isinstance(data, dict):
         return {k: substitute_variables(v) for k, v in data.items()}
     elif isinstance(data, list):
         return [substitute_variables(item) for item in data]
     elif isinstance(data, str):
-        # Find all {{test_id.key}} patterns
-        pattern = r'{{\s*([A-Za-z0-9_]+)\.([A-Za-z0-9_]+)\s*}}'
+        # Updated pattern to support multiple dots in key path
+        pattern = r'{{\s*([A-Za-z0-9_]+)\.([A-Za-z0-9_.]+)\s*}}'
         
         def replace_match(match):
             test_id = match.group(1)
-            key = match.group(2)
+            key_path = match.group(2)
             
-            # Check if we have this value stored
-            if test_id in stored_values and key in stored_values[test_id]:
-                return str(stored_values[test_id][key])
-            else:
-                print(f"[WARN] Variable not found: {test_id}.{key}")
-                return match.group(0)  # Return original if not found
+            # Check if test_id exists
+            if test_id not in stored_values:
+                print(f"[WARN] Test ID not found: {test_id}")
+                return match.group(0)
+            
+            # Navigate through nested keys
+            current = stored_values[test_id]
+            keys = key_path.split('.')
+            
+            for i, key in enumerate(keys):
+                if isinstance(current, dict) and key in current:
+                    current = current[key]
+                else:
+                    print(f"[WARN] Variable not found: {test_id}.{key_path} (failed at '{key}')")
+                    return match.group(0)  # Return original if not found
+            
+            return str(current)
         
         # Replace all occurrences
         return re.sub(pattern, replace_match, data)
@@ -253,6 +266,13 @@ def run_tests_from_excel(file_path: str):
 
     print("Reading test cases from Excel...")
     df = pd.read_excel(file_path)
+    
+    # Issue #10: Validate required columns exist
+    required_columns = ["Test_ID", "Method", "Endpoint", "Run_Flag"]
+    missing_cols = [col for col in required_columns if col not in df.columns]
+    if missing_cols:
+        raise ValueError(f"❌ Missing required columns in Excel: {missing_cols}")
+    
     results = []
     os.makedirs("reports", exist_ok=True)
 
@@ -400,6 +420,55 @@ def run_tests_from_excel(file_path: str):
                 "Response": json.dumps(resp_json, indent=2)
             })
 
+        # Issue #9: Better exception handling
+        except requests.exceptions.Timeout:
+            if test_id in dependent_tests:
+                dep_test_results[test_id] = "ERROR"
+            
+            results.append({
+                "Test_ID": test_id,
+                "API_Group": api_group,
+                "Test_Name": test_name,
+                "Method": method,
+                "Endpoint": endpoint,
+                "Status_Code": "N/A",
+                "Result": "ERROR",
+                "Remarks": "Request timeout (30s exceeded)",
+                "Response": ""
+            })
+            
+        except requests.exceptions.ConnectionError as e:
+            if test_id in dependent_tests:
+                dep_test_results[test_id] = "ERROR"
+            
+            results.append({
+                "Test_ID": test_id,
+                "API_Group": api_group,
+                "Test_Name": test_name,
+                "Method": method,
+                "Endpoint": endpoint,
+                "Status_Code": "N/A",
+                "Result": "ERROR",
+                "Remarks": f"Connection error - API may be down: {str(e)}",
+                "Response": ""
+            })
+            
+        except requests.exceptions.RequestException as e:
+            if test_id in dependent_tests:
+                dep_test_results[test_id] = "ERROR"
+            
+            results.append({
+                "Test_ID": test_id,
+                "API_Group": api_group,
+                "Test_Name": test_name,
+                "Method": method,
+                "Endpoint": endpoint,
+                "Status_Code": "N/A",
+                "Result": "ERROR",
+                "Remarks": f"Request error: {str(e)}",
+                "Response": ""
+            })
+            
         except Exception as e:
             if test_id in dependent_tests:
                 dep_test_results[test_id] = "ERROR"
@@ -420,32 +489,31 @@ def run_tests_from_excel(file_path: str):
 
     # Save report
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-
+    
     # Ensure the folder exists before saving
     output_folder = "reports"
     os.makedirs(output_folder, exist_ok=True)
-
+    
     output_file = os.path.join(output_folder, f"test_results_{timestamp}.xlsx")
-
+    
     results_df = pd.DataFrame(results)
     results_df.to_excel(output_file, index=False)
-
+    
     # Print summary
     total_tests = len(results_df)
     passed_tests = len(results_df[results_df["Result"] == "PASS"])
     failed_tests = len(results_df[results_df["Result"] == "FAIL"])
     skipped_tests = len(results_df[results_df["Result"] == "SKIPPED"])
     error_tests = len(results_df[results_df["Result"] == "ERROR"])
-
+    
     print(f"\nTEST SUMMARY:")
     print(f"PASSED: {passed_tests}/{total_tests}")
     print(f"FAILED: {failed_tests}/{total_tests}")
     print(f"SKIPPED: {skipped_tests}/{total_tests}")
     print(f"ERRORS: {error_tests}/{total_tests}")
     print(f"Results saved to: {output_file}")
-
+    
     return results_df
-
 
 
 def test_run_excel_suite():
