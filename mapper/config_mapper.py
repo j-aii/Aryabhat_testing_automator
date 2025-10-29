@@ -58,7 +58,7 @@ mapper = {
     "smtp_server": "smtp.office365.com",
     "smtp_port": 587,
     "support_mail": "support@diagonal.ai",
-    "smtp_password": "qrkypmkcmgzcvtnq",
+    "smtp_password": "Valid_SMTP_Pass123!",
     "smtp_security": "StartTLS",
 
     # --- License Keys ---
