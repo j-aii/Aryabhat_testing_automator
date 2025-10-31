@@ -1,16 +1,16 @@
 mapper = {
 
     # --- User Accounts & Credentials ---
-    "valid_mail": "valid_mail@gmail.com",   # Should be unregisterd mail
-    "valid_mail_pass": "ValidPassword123!", # Password for unregisterd m
-    "login_mail": "login_mail@gmail.com",   # Mail for login tests
-    "login_pass": "Password123!",           # Password for login tests
+    "valid_mail": "jai.chavan@diagonal.ai",   # Should be unregisterd mail
+    "valid_mail_pass": "Vslj#43Fs", # Password for unregisterd mail
+    "login_mail": "comeon1711@gmail.com",   # Mail for login tests
+    "login_pass": "Vslj#43F*s",           # Password for login tests
     "test_mail": "test_mail@gmail.com",     # Used to invite users
     "nonexistent_mail": "nonexistent@diagonal.ai",
     "invalid_email": "invalid_email@",      # Invalid email format
     "support_mail": "support@diagonal.ai",  # Support email address
-    "inactivate_mail": "unlicensed_mail",   # Mail for unlicensed/inactive account tests
-    "username_u": "valid_username",         # To Activate/ Revoke user's license
+    "inactivate_mail": "jai.chavan@diagonal.ai",   # Mail for unlicensed/inactive account tests
+    "username_u": "user",         # To Activate/ Revoke user's license
 
     # --- OTP / Token / Codes ---
     "valid_otp": "999999",                  # Acutal otp must be given during test since dynamic isnt possibe 
@@ -20,16 +20,16 @@ mapper = {
     "invalid_code": "invalid_callback_code",     # Invalid code for negative tests
 
     # --- User IDs / Reference IDs ---
-    "valid_userId": "68cbd755a713b399daf533x0", # Logged in User's user ID (SUPERADMIN)
+    "valid_userId": "68cbd755a713b399daf533c2", # Logged in User's user ID (SUPERADMIN)
     "invalid_userId": "invalid_user_123",       
-    "nonexistent_userId": "sdasfsaf1243123412",
+    "nonexistent_userId": "68cbd755a713b399daf534x2",
 
     # --- Tag & Category ---
     "valid_tag_name": "medical",                # Valid tag name the doesnt exist yet - to create, to fetch, to delete, to rename
     "invalid_tag_name": "NonExistentTag",       
-    "valid_tag_id": "68e4c44d8cdd409f3fa8a6c2",
+    # "valid_tag_id": "68e4c44d8cdd409f3fa8a6c2",
     "invalid_tag_id": "9999999999999",
-    "rename_tag": "healthcare",                 # New name for renaming tag 
+    "rename_tag": "Works",                 # New name for renaming tag 
 
     # --- Chat / Notebook ---
     "valid_chat_id": "icnye4gx35",              # Existing chat ID for stop-stream api, React, Show History, Pin 
@@ -38,11 +38,11 @@ mapper = {
     "valid_temperature": 0.5,                   # Valid temperature 
 
     # --- Providers / Models ---
-    "valid_provider_id": "68e4c7239510afbb6f8df6ac",
+    "valid_provider_id": "68c95a3b15c02201dda52ea8",
     "invalid_provider_id": "invalid_provider_999",
-    "valid_model_id": "c7gl",
+    "valid_model_id": "lwav",
     "invalid_model_id": "invalid_model_999",
-    "provider_name": "OpenAI",
+    "provider_name": "Ollama",
     "valid_apikey": "dummy_api_key",
     "valid_proxy": "https://dummy.proxy",
 
@@ -60,7 +60,7 @@ mapper = {
     "smtp_server": "smtp.office365.com",
     "smtp_port": 587,
     "support_mail": "support@diagonal.ai",
-    "smtp_password": "Valid_SMTP_Pass123!",
+    "smtp_password": "valid_smtp_password",
     "smtp_security": "StartTLS",
 
     # --- License Keys ---
@@ -87,9 +87,9 @@ mapper = {
     "default_state": "StateName",
     "default_gender": "M",
     "default_dob": "2000-01-01",
-    "existing_username": "existing_user",       # Username that already exists in the system
-    "new_username": "new_user_123",             # New username to registertests
-    "unverified_mail": "mail",                  # Otp verification pending mail
+    "existing_username": "John",       # Username that already exists in the system
+    "new_username": "user",             # New username to registertests
+    "unverified_mail": "jai.chavan@diagonal.ai",                  # Otp verification pending mail
 
 
     # --- Cloud Storage (Google Drive / OneDrive) ---
@@ -111,7 +111,7 @@ mapper = {
     "llm_created_at": "2025-10-10T10:00:00Z",
 
 
-    "delete_user": "user_to_delete",            # Pass the username of the user to be deleted
+    "delete_user": "user",            # Pass the username of the user to be deleted
     "user_role": "Admin",                       # Role to assign to the new user
 
 }
