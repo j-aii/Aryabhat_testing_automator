@@ -10,11 +10,11 @@ from mapper.config_mapper import mapper
 BASE_URL = "https://api.aryabhat.ai"
 LOGIN_ENDPOINT = f"{BASE_URL}/api/auth/login"
 
-VALID_USERNAME = "comeon1711@gmail.com"
-VALID_PASSWORD = "Vslj#43F*s"
+VALID_USERNAME = ""
+VALID_PASSWORD = ""
 
-DOC_USERNAME = "Neosprint"
-DOC_PASSWORD = "@Qb!js#QJSD_sdf1"
+DOC_USERNAME = ""
+DOC_PASSWORD = ""
 
 # Global storage for variable substitution
 stored_values = {}

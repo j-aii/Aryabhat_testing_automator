@@ -1,15 +1,15 @@
 mapper = {
 
     # --- User Accounts & Credentials ---
-    "valid_mail": "jai.chavan@diagonal.ai",   # Should be unregisterd mail
-    "valid_mail_pass": "Vslj#43Fs", # Password for unregisterd mail
-    "login_mail": "comeon1711@gmail.com",   # Mail for login tests
-    "login_pass": "Vslj#43F*s",           # Password for login tests
+    "valid_mail": "",   # Should be unregisterd mail
+    "valid_mail_pass": "", # Password for unregisterd mail
+    "login_mail": "",   # Mail for login tests
+    "login_pass": "",           # Password for login tests
     "test_mail": "test_mail@gmail.com",     # Used to invite users
     "nonexistent_mail": "nonexistent@diagonal.ai",
     "invalid_email": "invalid_email@",      # Invalid email format
     "support_mail": "support@diagonal.ai",  # Support email address
-    "inactivate_mail": "jai.chavan@diagonal.ai",   # Mail for unlicensed/inactive account tests
+    "inactivate_mail": "",   # Mail for unlicensed/inactive account tests
     "username_u": "user",         # To Activate/ Revoke user's license
 
     # --- OTP / Token / Codes ---
@@ -20,14 +20,13 @@ mapper = {
     "invalid_code": "invalid_callback_code",     # Invalid code for negative tests
 
     # --- User IDs / Reference IDs ---
-    "valid_userId": "68cbd755a713b399daf533c2", # Logged in User's user ID (SUPERADMIN)
+    "valid_userId": "", # Logged in User's user ID (SUPERADMIN)
     "invalid_userId": "invalid_user_123",       
     "nonexistent_userId": "68cbd755a713b399daf534x2",
 
     # --- Tag & Category ---
     "valid_tag_name": "medical",                # Valid tag name the doesnt exist yet - to create, to fetch, to delete, to rename
     "invalid_tag_name": "NonExistentTag",       
-    # "valid_tag_id": "68e4c44d8cdd409f3fa8a6c2",
     "invalid_tag_id": "9999999999999",
     "rename_tag": "Works",                 # New name for renaming tag 
 
@@ -89,7 +88,7 @@ mapper = {
     "default_dob": "2000-01-01",
     "existing_username": "John",       # Username that already exists in the system
     "new_username": "user",             # New username to registertests
-    "unverified_mail": "jai.chavan@diagonal.ai",                  # Otp verification pending mail
+    "unverified_mail": "",                  # Otp verification pending mail
 
 
     # --- Cloud Storage (Google Drive / OneDrive) ---
