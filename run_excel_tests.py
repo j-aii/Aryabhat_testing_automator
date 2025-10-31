@@ -10,11 +10,11 @@ from mapper.config_mapper import mapper
 BASE_URL = "https://api.aryabhat.ai"
 LOGIN_ENDPOINT = f"{BASE_URL}/api/auth/login"
 
-VALID_USERNAME = "valid_mail@gmail.com"
-VALID_PASSWORD = "Valid@123"
+VALID_USERNAME = "comeon1711@gmail.com"
+VALID_PASSWORD = "Vslj#43F*s"
 
-DOC_USERNAME = "DocUser"
-DOC_PASSWORD = "Valid@123"
+DOC_USERNAME = "Neosprint"
+DOC_PASSWORD = "@Qb!js#QJSD_sdf1"
 
 # Global storage for variable substitution
 stored_values = {}
@@ -134,8 +134,8 @@ def build_headers(header_field, tokens):
 
     if header_field == "expired_auth_headers":
         return {
-            "Authorization": "Bearer expired_token_123",
-            "Session-Token": "expired_session_456"
+            "Authorization": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJKb2huIiwiZXhwIjoxNzYwNTIzNDMyfQ.Z7Sar_CrlHeI2WICE-HZdQqksGUc3LXj6Tp1tHspD7334o63BxnzAGAQTVnI8KaXumLUag_-1JKhEzakcmNBGesSHxXWImd71M1lEFFE1ApXoFEDQ_9Xmkz1Ieea8BARr87ZdelzI8zSSCqQPxkYFTbeltcJQtd_vjZ_-BX2cYxUVBwgcqQQs2dyJrLSYg9zSNXpjUHEYP8BXflK9RzJpIEznLx4zfdWYFChGOc5ois4c9472oEZuU5R2LKJGjZ662qKbA2gnYsLv5D5LWLE_buicc4w5V5B4yPG0MVcXDG-1dMIR4czS-mNZSJXAwvSgMeW4AI7f_9luh12bjZehA",
+            "Session-Token": "df9d35b2-6a34-458b-8713-d9b5526ce5fc"
         }
 
     if header_field == "inactive_auth_headers":
@@ -392,13 +392,21 @@ def run_tests_from_excel(file_path: str):
         try:
             # Handle different endpoint types as before
             if any(ep in endpoint for ep in ["/api/docs", "/api/redoc"]):
-                response = requests.request(
-                    method=method,
-                    url=endpoint,
-                    auth=HTTPBasicAuth(DOC_USERNAME, DOC_PASSWORD),
-                    headers={"accept": "text/html"},
-                    timeout=30,
-                )
+                if headers in ["invalid_auth"]:
+                    response = requests.request(
+                        method=method,
+                        url=endpoint,
+                        headers={"accept": "text/html"},
+                        timeout=30,
+                    )
+                else:
+                    response = requests.request(
+                        method=method,
+                        url=endpoint,
+                        auth=HTTPBasicAuth(DOC_USERNAME, DOC_PASSWORD),
+                        headers={"accept": "text/html"},
+                        timeout=30,
+                    )
 
             elif "/register" in endpoint:
                 response = requests.request(
@@ -418,6 +426,17 @@ def run_tests_from_excel(file_path: str):
                     headers=headers,
                     data=payload if payload else None,
                     timeout=30,
+                )
+
+            elif any(ep in endpoint for ep in ["/api/auth/google", "/api/auth/microsoft"]):
+                response = requests.request(
+                    method=method,
+                    url=endpoint,
+                    headers=headers,
+                    params=params if params else None,
+                    json=payload if payload else None,
+                    timeout=30,
+                    allow_redirects=False  
                 )
 
             else:

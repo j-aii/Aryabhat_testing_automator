@@ -1,39 +1,41 @@
 mapper = {
 
     # --- User Accounts & Credentials ---
-    "valid_mail": "valid_mail@gmail.com",
-    "valid_mail_pass": "ValidPassword123!",
-    "login_mail": "login_mail@gmail.com",
-    "login_pass": "Password123!",
-    "sample_mail": "sample_mail@gmail.com",
-    "test_mail": "test_mail@gmail.com",
+    "valid_mail": "valid_mail@gmail.com",   # Should be unregisterd mail
+    "valid_mail_pass": "ValidPassword123!", # Password for unregisterd m
+    "login_mail": "login_mail@gmail.com",   # Mail for login tests
+    "login_pass": "Password123!",           # Password for login tests
+    "test_mail": "test_mail@gmail.com",     # Used to invite users
     "nonexistent_mail": "nonexistent@diagonal.ai",
-    "invalid_email": "invalid_email@",
-    "support_mail": "support@diagonal.ai",
+    "invalid_email": "invalid_email@",      # Invalid email format
+    "support_mail": "support@diagonal.ai",  # Support email address
+    "inactivate_mail": "unlicensed_mail",   # Mail for unlicensed/inactive account tests
+    "username_u": "valid_username",         # To Activate/ Revoke user's license
 
     # --- OTP / Token / Codes ---
-    "valid_otp": "999999",
-    "invalid_otp": "123456",
+    "valid_otp": "999999",                  # Acutal otp must be given during test since dynamic isnt possibe 
+    "invalid_otp": "123456",                # Invalid OTP for negative tests
     "valid_google_code": "<valid_google_code>",
     "valid_microsoft_code": "<valid_microsoft_code>",
-    "invalid_code": "invalid_code",
+    "invalid_code": "invalid_callback_code",     # Invalid code for negative tests
 
     # --- User IDs / Reference IDs ---
-    "valid_userId": "68cbd755a713b399daf533x0",
-    "invalid_userId": "invalid_user_123",
+    "valid_userId": "68cbd755a713b399daf533x0", # Logged in User's user ID (SUPERADMIN)
+    "invalid_userId": "invalid_user_123",       
     "nonexistent_userId": "sdasfsaf1243123412",
-    "google_oauth_code": "valid_google_oauth_code",
 
     # --- Tag & Category ---
-    "valid_tag_name": "medical",
-    "invalid_tag_name": "NonExistentTag",
+    "valid_tag_name": "medical",                # Valid tag name the doesnt exist yet - to create, to fetch, to delete, to rename
+    "invalid_tag_name": "NonExistentTag",       
     "valid_tag_id": "68e4c44d8cdd409f3fa8a6c2",
     "invalid_tag_id": "9999999999999",
+    "rename_tag": "healthcare",                 # New name for renaming tag 
 
     # --- Chat / Notebook ---
-    "valid_chat_id": "icnye4gx35",
+    "valid_chat_id": "icnye4gx35",              # Existing chat ID for stop-stream api, React, Show History, Pin 
     "invalid_chat_id": "invalid_chat_999",
     "nonexistent_chat_id": "non-existent-chat-id-999",
+    "valid_temperature": 0.5,                   # Valid temperature 
 
     # --- Providers / Models ---
     "valid_provider_id": "68e4c7239510afbb6f8df6ac",
@@ -62,16 +64,17 @@ mapper = {
     "smtp_security": "StartTLS",
 
     # --- License Keys ---
-    "valid_signed_license_key": "actual_valid_signed_license_key",
+    "valid_signed_license_key": "actual_valid_signed_license_key",  # Must be activated
     "revoked_license_key": "valid_signed_license_to_be_revoked",
     "invalid_license_key": "INVALID-KEY-XYZ",
 
-    # --- Buckets / Files ---
-    "valid_bucket": "uploads",
-    "custom_bucket": "custom-bucket",
-    "invalid_bucket": "invalid_bucket_999",
-    "file_1": "file1.txt",
-    "file_2": "file2.txt",
+    # --- Buckets / Files (for batch processing) ---
+    "valid_bucket": "uploads",                  # S3 storage bucket name
+    "invalid_bucket": "invalid_bucket_999",     # Invalid bucket name
+    # "file1": "file1.txt",                       # Object keys / file names in the bucket
+    # "file2": "file2.txt",                       # Another file name
+    "bucket_prefix": "test_files/",             # Prefix/folder in the bucket
+    "valid_object_keys": ["file1.txt", "file2.txt"],
 
     # --- Pagination Defaults ---
     "default_page": 1,
@@ -83,5 +86,32 @@ mapper = {
     "default_city": "CityName",
     "default_state": "StateName",
     "default_gender": "M",
-    "default_dob": "2000-01-01"
+    "default_dob": "2000-01-01",
+    "existing_username": "existing_user",       # Username that already exists in the system
+    "new_username": "new_user_123",             # New username to registertests
+    "unverified_mail": "mail",                  # Otp verification pending mail
+
+
+    # --- Cloud Storage (Google Drive / OneDrive) ---
+    "valid_folder_id": "valid_folder_123",       # Valid folder ID for Google Drive
+    "invalid_folder_id": "invalid_id_999",
+    "valid_item_ids": ["file1", "file2"],
+    "google_valid_item_ids": ["file1", "file2"],
+    "onedrive_valid_item_ids": ["file1", "file2"],
+    "invalid_item_ids": ["invalid_file_123"],
+    "valid_email": "valid_mail@gmail.com",
+    "o_email": "Valid_oneDrive_mail",           # Valid OneDrive email
+    "valid_folderId": "valid_folder_123",       # Valid OneDrive folder ID for files
+
+
+    "llm_endpoint_url": "http://db_server:11434/api/generate",
+    "llm_model": "llama3.1:latest",
+    "llm_provider_name": "TestProvider",
+    "llm_model_name": "TestModel",
+    "llm_created_at": "2025-10-10T10:00:00Z",
+
+
+    "delete_user": "user_to_delete",            # Pass the username of the user to be deleted
+    "user_role": "Admin",                       # Role to assign to the new user
+
 }
