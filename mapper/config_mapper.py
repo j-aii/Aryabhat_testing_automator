@@ -28,13 +28,17 @@ mapper = {
     "valid_tag_name": "medical",                # Valid tag name the doesnt exist yet - to create, to fetch, to delete, to rename
     "invalid_tag_name": "NonExistentTag",       
     "invalid_tag_id": "9999999999999",
-    "rename_tag": "Works",                 # New name for renaming tag 
+    "rename_tag": "Works",                      # New name for renaming tag 
 
     # --- Chat / Notebook ---
     "valid_chat_id": "icnye4gx35",              # Existing chat ID for stop-stream api, React, Show History, Pin 
     "invalid_chat_id": "invalid_chat_999",
     "nonexistent_chat_id": "non-existent-chat-id-999",
     "valid_temperature": 0.5,                   # Valid temperature 
+    "valid_user_input": "what is a machine?",   # Valid user input for chat tests
+    "valid_dept_tag": "personal",               # Valid department tag for Chat
+    "valid_message_id": "",                     # Valid message ID for pin/unpin message tests
+
 
     # --- Providers / Models ---
     "valid_provider_id": "68c95a3b15c02201dda52ea8",
@@ -44,6 +48,7 @@ mapper = {
     "provider_name": "Ollama",
     "valid_apikey": "dummy_api_key",
     "valid_proxy": "https://dummy.proxy",
+    
 
     # --- Database Config ---
     "db_server": "localhost",
