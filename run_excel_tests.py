@@ -140,8 +140,8 @@ def build_headers(header_field, tokens):
 
     if header_field == "inactive_auth_headers":
         return {
-            "Authorization": "Bearer inactive_user_token_789",
-            "Session-Token": "inactive_session_987"
+            "Authorization": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJKb2huIiwiZXhwIjoxNzYwNTIzNDMyfQ.Z7Sar_CrlHeI2WICE-HZdQqksGUc3LXj6Tp1tHspD7334o63BxnzAGAQTVnI8KaXumLUag_-1JKhEzakcmNBGesSHxXWImd71M1lEFFE1ApXoFEDQ_9Xmkz1Ieea8BARr87ZdelzI8zSSCqQPxkYFTbeltcJQtd_vjZ_-BX2cYxUVBwgcqQQs2dyJrLSYg9zSNXpjUHEYP8BXflK9RzJpIEznLx4zfdWYFChGOc5ois4c9472oEZuU5R2LKJGjZ662qKbA2gnYsLv5D5LWLE_buicc4w5V5B4yPG0MVcXDG-1dMIR4czS-mNZSJXAwvSgMeW4AI7f_9luh12bjZehA",
+            "Session-Token": "df9d35b2-6a34-458b-8713-d9b5526ce5fc"
         }
 
     # Custom headers in key:value form
