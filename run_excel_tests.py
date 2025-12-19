@@ -5,10 +5,12 @@ import os
 import re
 from datetime import datetime
 from requests.auth import HTTPBasicAuth
-from mapper.config_mapper import mapper 
+from mapper.config_mapper import mapper
+from collections import defaultdict, deque  
 
-BASE_URL = "https://api.aryabhat.ai"
-LOGIN_ENDPOINT = f"{BASE_URL}/api/auth/login"
+
+BASE_URL = "https://demo.aryabhat.ai"
+LOGIN_ENDPOINT = f"{BASE_URL}/login"
 
 VALID_USERNAME = ""
 VALID_PASSWORD = ""
@@ -259,6 +261,10 @@ def extract_and_store_values(test_id, response_data):
         stored_values[test_id]["_id"] = response_data["_id"]
         stored_values[test_id]["id"] = response_data["_id"]
 
+    last_message_id = extract_last_message_id(response_data)
+    if last_message_id:
+        stored_values[test_id]["last_message_id"] = last_message_id
+
 
 def evaluate_test_result(status_code, expected_status_list, response_data, expected_keys):
     """Evaluate test result based on status code and expected keys."""
@@ -299,6 +305,108 @@ def evaluate_test_result(status_code, expected_status_list, response_data, expec
     return result, remarks
 
 
+# -------- NEW: dependency graph + topological sort helpers --------
+def extract_last_message_id(response_data):
+    """
+    Extract last message_id from ShowHistory-like response.
+    Expected shape:
+    {
+        "chat_list": "{ \"messages\": [ {\"message_id\": ...}, ... ] }"
+    }
+    """
+    try:
+        chat_list_raw = response_data.get("chat_list")
+        if not chat_list_raw:
+            return None
+
+        # chat_list is a JSON string
+        chat_list = json.loads(chat_list_raw)
+
+        messages = chat_list.get("messages", [])
+        if not messages:
+            return None
+
+        last_msg = messages[-1]
+
+        return (
+            last_msg.get("message_id")
+            or last_msg.get("message_ids")
+        )
+    except Exception:
+        return None
+
+
+
+
+def build_dependency_graph(df):
+    """
+    Build a dependency graph and indegree map from the DataFrame.
+    - graph: dep_test_id -> [tests that depend on it]
+    - indegree: test_id -> number of unmet dependencies
+    Only tests with Run_Flag == 'yes' are considered.
+    """
+    graph = defaultdict(list)
+    indegree = defaultdict(int)
+
+    run_df = df[df["Run_Flag"].astype(str).str.lower() == "yes"].copy()
+    test_ids = set(run_df["Test_ID"].astype(str))
+
+    # Initialize indegree for all runnable tests
+    for tid in test_ids:
+        indegree[tid] = 0
+
+    for _, row in run_df.iterrows():
+        test_id = str(row["Test_ID"])
+        deps_field = row.get("Depends_On", "")
+
+        if pd.isna(deps_field) or not str(deps_field).strip():
+            continue
+
+        for dep in str(deps_field).split(","):
+            dep = dep.strip()
+            if not dep:
+                continue
+            if dep not in test_ids:
+                # strict: dependency must exist and be runnable
+                raise ValueError(f"Test {test_id} depends on missing or non-runnable test {dep}")
+            graph[dep].append(test_id)
+            indegree[test_id] += 1
+
+    return graph, indegree
+
+
+def resolve_execution_order(df):
+    """
+    Resolve dependency-aware execution order using Kahn's algorithm (topological sort).
+    Only tests with Run_Flag == 'yes' participate.
+    """
+    graph, indegree = build_dependency_graph(df)
+
+    run_df = df[df["Run_Flag"].astype(str).str.lower() == "yes"].copy()
+    all_run_ids = [str(tid) for tid in run_df["Test_ID"]]
+
+    # Queue of tests with no unmet dependencies
+    queue = deque([tid for tid in all_run_ids if indegree[tid] == 0])
+    ordered = []
+
+    while queue:
+        current = queue.popleft()
+        ordered.append(current)
+
+        for child in graph[current]:
+            indegree[child] -= 1
+            if indegree[child] == 0:
+                queue.append(child)
+
+    if len(ordered) != len(all_run_ids):
+        raise ValueError("Circular dependency detected in test cases")
+
+    return ordered
+
+
+# -----------------------------------------------------------------
+
+
 def run_tests_from_excel(file_path: str):
     """Main function to run tests from Excel file."""
     global stored_values, dep_test_results, mapper
@@ -319,21 +427,30 @@ def run_tests_from_excel(file_path: str):
     if missing_cols:
         raise ValueError(f"Missing required columns in Excel: {missing_cols}")
 
+    # NEW: Resolve dependency-aware execution order (auto-layering)
+    execution_order = resolve_execution_order(df)
+
+    # Reindex by Test_ID for quick row lookup
+    df = df.set_index("Test_ID")
+
     results = []
     os.makedirs("reports", exist_ok=True)
 
-    # Identify dependent tests
+    # Identify tests that are dependencies of others (for dep_test_results tracking)
     dependent_tests = set()
-    for _, row in df.iterrows():
+    for _, row in df.reset_index().iterrows():
         if pd.notna(row.get("Depends_On")) and str(row.get("Depends_On")).strip():
             for dep in str(row.get("Depends_On")).split(","):
                 dependent_tests.add(dep.strip())
 
-    for _, row in df.iterrows():
+    # MAIN LOOP: now in dependency-resolved order
+    for test_id in execution_order:
+        row = df.loc[test_id]
+
         if str(row.get("Run_Flag", "")).lower() != "yes":
             continue
 
-        test_id = str(row.get("Test_ID", "")).strip()
+        test_id = str(test_id).strip()
         api_group = row.get("API_Group", "")
         test_name = row.get("Test_Name", "")
         method = str(row.get("Method", "GET")).upper()
@@ -362,8 +479,8 @@ def run_tests_from_excel(file_path: str):
             except Exception:
                 expected_keys = [k.strip().strip('"').strip("'") for k in expected_keys_str.split(",")]
 
-        # Dependency check
-        depends_on = str(row.get("Depends_On", "")).split(",") if pd.notna(row.get("Depends_On")) else []
+        # Dependency check (still needed to skip on failure)
+        depends_on = [d.strip() for d in str(row.get("Depends_On", "")).split(",")  if d.strip()] if pd.notna(row.get("Depends_On")) else []
         skip_test = False
         for dep in depends_on:
             dep = dep.strip()
@@ -436,7 +553,7 @@ def run_tests_from_excel(file_path: str):
                     params=params if params else None,
                     json=payload if payload else None,
                     timeout=30,
-                    allow_redirects=False  
+                    allow_redirects=False
                 )
 
             else:

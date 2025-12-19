@@ -20,7 +20,7 @@ mapper = {
     "invalid_code": "invalid_callback_code",     # Invalid code for negative tests
 
     # --- User IDs / Reference IDs ---
-    "valid_userId": "", # Logged in User's user ID (SUPERADMIN)
+    # "valid_userId": "", # Logged in User's user ID (SUPERADMIN)
     "invalid_userId": "invalid_user_123",       
     "nonexistent_userId": "68cbd755a713b399daf534x2",
 
@@ -31,13 +31,13 @@ mapper = {
     "rename_tag": "Works",                      # New name for renaming tag 
 
     # --- Chat / Notebook ---
-    "valid_chat_id": "icnye4gx35",              # Existing chat ID for stop-stream api, React, Show History, Pin 
+    # "valid_chat_id": "icnye4gx35",              # Existing chat ID for stop-stream api, React, Show History, Pin 
     "invalid_chat_id": "invalid_chat_999",
     "nonexistent_chat_id": "non-existent-chat-id-999",
     "valid_temperature": 0.5,                   # Valid temperature 
     "valid_user_input": "what is a machine?",   # Valid user input for chat tests
     "valid_dept_tag": "personal",               # Valid department tag for Chat
-    "valid_message_id": "",                     # Valid message ID for pin/unpin message tests
+    # "valid_message_id": "",                     # Valid message ID for pin/unpin message tests
 
 
     # --- Providers / Models ---
